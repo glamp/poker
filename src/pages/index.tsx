@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <Container maxWidth="sm">
       <Stack direction="column" spacing={2} alignItems="flex-start" pt={8}>
-        <Typography variant="h1">Welcome to Safari Scrum</Typography>
+        <Typography variant="h1">Welcome to Wild Cards</Typography>
 
         <Link href={roomLink ?? "/"}>
           <Button variant="contained" size="large">

@@ -42,7 +42,7 @@ const themeOptions: ThemeOptions = {
   // https://huemint.com/brand-intersection/#palette=b64a2f-6ac4ac-d7c49e-1c1a2f
   palette: {
     primary: {
-      main: "#000000",
+      main: "#557C55",
     },
     secondary: {
       main: "#118C4F",
@@ -55,7 +55,7 @@ const themeOptions: ThemeOptions = {
       contrastText: "#fff",
     },
     warning: {
-      main: "#f5c25c",
+      main: "#FA7070",
     },
     error: {
       main: "#ff0033",

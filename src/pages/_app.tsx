@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import Nav from "@/widgets/Nav";
 import createCache from "@emotion/cache";
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
@@ -99,7 +100,7 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
             />
             <link rel="icon" href="/favicon.ico" />
           </Head>
-
+          <Nav />
           <Component {...pageProps} />
         </ThemeProvider>
       </CacheProvider>

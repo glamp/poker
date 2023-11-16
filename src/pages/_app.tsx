@@ -91,8 +91,8 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
         <ThemeProvider theme={lightTheme}>
           <CssBaseline />
           <Head>
-            <title>Planning Pokerist</title>
-            <meta name="description" content="Planning Pokerist!" />
+            <title>Safari Scrum</title>
+            <meta name="description" content="Safari Scrum!" />
             <meta
               name="viewport"
               content="width=device-width, initial-scale=1.0"

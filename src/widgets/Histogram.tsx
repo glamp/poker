@@ -106,3 +106,5 @@ export const Histogram: React.FC<{ players: Player[] }> = ({ players }) => {
     </Stack>
   );
 };
+
+export default Histogram;

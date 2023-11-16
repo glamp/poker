@@ -75,3 +75,5 @@ export const PlayingCard: React.FC<Props> = ({
     </div>
   );
 };
+
+export default PlayingCard;

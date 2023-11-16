@@ -49,3 +49,5 @@ export const PlayerPresenter: React.FC<Player> = ({
     </Stack>
   );
 };
+
+export default PlayerPresenter;

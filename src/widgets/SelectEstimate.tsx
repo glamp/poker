@@ -59,3 +59,5 @@ export const SelectEstimate: React.FC<{
     </Stack>
   );
 };
+
+export default SelectEstimate;

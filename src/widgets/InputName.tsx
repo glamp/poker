@@ -97,3 +97,5 @@ export const InputName: React.FC<Props> = ({ onComplete }) => {
     </Dialog>
   );
 };
+
+export default InputName;

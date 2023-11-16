@@ -14,6 +14,9 @@ export default function Home() {
       animals
     )}`.toLocaleLowerCase();
     setRoomLink(`room/${roomId}`);
+    for (const avatar of avatars) {
+      new Image().src = avatar.avatar;
+    }
   }, []);
 
   return (

@@ -123,6 +123,22 @@ const Room: React.FC<{
 
   const players = presenceData.map((msg) => msg.data as Player);
 
+  if (!players.length) {
+    // center vertically and horizontally using stack
+    return (
+      <Container maxWidth="lg">
+        <Stack
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+          sx={{ height: "80vh" }}
+        >
+          <Typography variant="h4">Joining room...</Typography>
+        </Stack>
+      </Container>
+    );
+  }
+
   return (
     <Container maxWidth="lg">
       <Stack direction="column" spacing={2}>

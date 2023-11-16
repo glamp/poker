@@ -8,6 +8,9 @@ export const Histogram: React.FC<{ players: Player[] }> = ({ players }) => {
     .map((player) => player.estimate)
     .filter(Boolean) as number[];
 
+  const hist = countBy(estimates);
+
+  /**
   const estimateStdev = Math.sqrt(
     estimates.reduce(
       (acc, x) =>
@@ -16,8 +19,6 @@ export const Histogram: React.FC<{ players: Player[] }> = ({ players }) => {
       0
     ) / estimates.length
   );
-  const hist = countBy(estimates);
-
   const estimateQuality = 1 - estimateStdev / 80;
   let estimateQualityLabel = "Meh";
   let progressColor = "error";
@@ -34,6 +35,7 @@ export const Histogram: React.FC<{ players: Player[] }> = ({ players }) => {
     estimateQualityLabel = "Meh";
     progressColor = "error";
   }
+   */
 
   return (
     <Stack

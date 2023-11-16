@@ -14,6 +14,7 @@
     "@mui/material": "^5.14.18",
     "@types/lodash": "^4.14.201",
     "@vercel/kv": "^1.0.0",
+    "ably": "^1.2.47",
     "lodash": "^4.17.21",
     "next": "14.0.2",
     "react": "^18",

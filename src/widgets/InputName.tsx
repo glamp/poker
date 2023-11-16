@@ -60,6 +60,7 @@ export const InputName: React.FC<Props> = ({ onComplete }) => {
           >
             {avatars.map((avatar) => (
               <Avatar
+                key={`avatar-${avatar.name}`}
                 alt={avatar.name}
                 src={avatar.avatar}
                 onClick={() => setSelectedAvatar(avatar.avatar)}
@@ -90,7 +91,7 @@ export const InputName: React.FC<Props> = ({ onComplete }) => {
             })
           }
         >
-          Let's go!
+          {`Let's go!`}
         </Button>
       </DialogActions>
     </Dialog>

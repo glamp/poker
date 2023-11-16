@@ -4,7 +4,7 @@ import { PlayingCard } from "./PlayingCard";
 export type Player = {
   name: string;
   avatar: string;
-  estimate?: number;
+  estimate?: number | null;
   isMe?: boolean;
   isLeader?: boolean;
   reveal?: boolean;

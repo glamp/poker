@@ -1,6 +1,7 @@
+import { Histogram } from "@/widgets/Histogram";
 import { InputName } from "@/widgets/InputName";
 import { Player, PlayerPresenter } from "@/widgets/Player";
-import { PlayingCard } from "@/widgets/PlayingCard";
+import { SelectEstimate } from "@/widgets/SelectEstimate";
 import {
   Button,
   Container,
@@ -9,9 +10,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useChannel, usePresence } from "ably/react";
 import { useRouter } from "next/router";
 import * as React from "react";
-import { useAsync, useInterval } from "react-use";
+import { useAsync, useDebounce } from "react-use";
 import { Fetcher } from "swr";
 
 const fetcher: Fetcher<Round, string> = async (url) => {
@@ -23,61 +25,84 @@ export type Round = {
   players: Player[];
 };
 
-const Room: React.FC = () => {
-  //   const [player, setPlayer] = useLocalStorage<Player | undefined>(
-  //     "player",
-  //     undefined
-  //   );
+const Room: React.FC<{
+  player: Player;
+  setPlayer: (player: Player) => void;
+}> = ({ player, setPlayer }) => {
   const router = useRouter();
   const roomId = router.query.id as string;
-  const leaderName = "Greg";
-  const [player, setPlayer] = React.useState<Player>({
-    name: "Greg",
-    avatar: "/avatars/bighorn-sheep.png",
-  });
   const [estimate, setEstimate] = React.useState<number | undefined>();
   const [count, setCount] = React.useState(3);
   const [isActive, setIsActive] = React.useState(false);
   const [reveal, setReveal] = React.useState(false);
-  const [round, setRound] = React.useState<Round | undefined>();
+
+  const channelName = `room/${roomId}`;
+  const { channel, ably } = useChannel(channelName);
+  const { presenceData, updateStatus } = usePresence<Player>(
+    channelName,
+    player
+  );
 
   useAsync(async () => {
     if (!player) {
       return;
     }
-    fetch(`/api/room/${roomId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        player,
-      }),
-    });
+    await updateStatus(player);
   }, [player]);
 
+  useDebounce(
+    async () => {
+      if (presenceData.length === 0) {
+        return;
+      }
+      // if the player is the only player in the room, then make them the leader
+      if (
+        player &&
+        !player.isLeader &&
+        presenceData.map((p) => p.data.name === player.name).length === 1
+      ) {
+        setPlayer({
+          ...player,
+          isLeader: true,
+        });
+      }
+    },
+    100,
+    [player, presenceData]
+  );
+
+  useChannel(channelName, "reveal", () => {
+    setCount(3);
+    setIsActive(true);
+  });
+
+  useChannel(channelName, "new-round", () => {
+    setReveal(false);
+    setPlayer({
+      ...player,
+      estimate: null,
+    });
+    setEstimate(undefined);
+  });
+
   useAsync(async () => {
-    if (!player || !estimate) {
+    if (!player || !estimate || !roomId) {
       return;
     }
-    fetch(`/api/room/${roomId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        player: {
-          ...player,
-          estimate,
-        },
-      }),
+    console.log("estimate", estimate);
+    await updateStatus({
+      ...player,
+      estimate,
     });
   }, [estimate]);
 
-  useInterval(async () => {
-    const round = await (await fetch(`/api/room/${roomId}`)).json();
-    setRound(round);
-  }, 1000);
+  const onClickReveal = React.useCallback(async () => {
+    ably.channels.get(channelName).publish("reveal", { ts: new Date() });
+  }, [ably, channelName]);
+
+  const onClickNewRound = React.useCallback(async () => {
+    ably.channels.get(channelName).publish("new-round", { ts: new Date() });
+  }, [ably, channelName]);
 
   React.useEffect(() => {
     let timerId: NodeJS.Timeout | undefined;
@@ -96,33 +121,11 @@ const Room: React.FC = () => {
     };
   }, [count, isActive]);
 
-  const startCountdown = () => {
-    setIsActive(true);
-  };
-
-  if (!round) {
-    return (
-      <Container maxWidth="lg">
-        <Stack
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          height="80vh"
-        >
-          <Typography>Loading...</Typography>
-        </Stack>
-      </Container>
-    );
-  }
-
-  const { players } = round;
+  const players = presenceData.map((msg) => msg.data as Player);
 
   return (
     <Container maxWidth="lg">
       <Stack direction="column" spacing={2}>
-        {!player && (
-          <InputName onComplete={(newPlayer) => setPlayer(newPlayer)} />
-        )}
         <Stack
           spacing={{ xs: 1, sm: 2 }}
           direction="row"
@@ -132,79 +135,35 @@ const Room: React.FC = () => {
           p={2}
           sx={{ width: "100%" }}
         >
-          {players.map((p, index) => (
-            <PlayerPresenter
-              key={index}
-              {...p}
-              isLeader={leaderName === p.name}
-              isMe={p.name === player?.name}
-              reveal={!reveal}
-            />
-          ))}
+          {players
+            .filter((x) => x)
+            .map((p, index) => (
+              <PlayerPresenter
+                key={`player-${index}`}
+                {...p}
+                isMe={p.name === player?.name}
+                reveal={!reveal}
+              />
+            ))}
         </Stack>
-        <Stack direction="row" spacing={2} justifyContent="center">
-          <PlayingCard
-            onClick={() => setEstimate(40)}
-            selected={estimate === 40}
-            selectable
-            isFlipped={false}
-            text={"40"}
-          />
-          <PlayingCard
-            onClick={() => setEstimate(60)}
-            selected={estimate === 60}
-            selectable
-            isFlipped={false}
-            text={"60"}
-          />
-          <PlayingCard
-            onClick={() => setEstimate(80)}
-            selected={estimate === 80}
-            selectable
-            isFlipped={false}
-            text={"80"}
-          />
-          <PlayingCard
-            onClick={() => setEstimate(120)}
-            selected={estimate === 120}
-            selectable
-            isFlipped={false}
-            text={"120"}
-          />
-          <PlayingCard
-            onClick={() => setEstimate(180)}
-            selected={estimate === 180}
-            selectable
-            isFlipped={false}
-            text={"180"}
-          />
-          <PlayingCard
-            onClick={() => setEstimate(240)}
-            selected={estimate === 240}
-            selectable
-            isFlipped={false}
-            text={"240"}
-          />
-          <PlayingCard
-            onClick={() => setEstimate(480)}
-            selected={estimate === 480}
-            selectable
-            isFlipped={false}
-            text={"480"}
-          />
-        </Stack>
+
+        {!reveal && (
+          <SelectEstimate estimate={estimate} setEstimate={setEstimate} />
+        )}
 
         <Dialog open={isActive}>
           <DialogContent sx={{ p: 4 }}>
-            {count > 0 ? count : "Reveal!"}
+            <Typography variant="h4">
+              {count > 0 ? count : "Reveal!"}
+            </Typography>
           </DialogContent>
         </Dialog>
 
-        {leaderName === player?.name && (
+        {player?.isLeader && !reveal && (
           <Stack direction="column" alignItems="center">
             <Button
               size="large"
-              onClick={startCountdown}
+              onClick={onClickReveal}
               disabled={isActive}
               variant="contained"
             >
@@ -212,9 +171,37 @@ const Room: React.FC = () => {
             </Button>
           </Stack>
         )}
+
+        {reveal && <Histogram players={players} />}
+        {player?.isLeader && reveal && (
+          <Stack direction="column" alignItems="center">
+            <Button
+              size="large"
+              onClick={onClickNewRound}
+              disabled={isActive}
+              variant="contained"
+            >
+              New Round
+            </Button>
+          </Stack>
+        )}
       </Stack>
+      {/* <pre>{JSON.stringify(players, null, 2)}</pre> */}
     </Container>
   );
 };
 
-export default Room;
+export const RoomWithLogin: React.FC = () => {
+  const [player, setPlayer] = React.useState<Player>();
+  if (!player) {
+    return (
+      <Container maxWidth="lg">
+        <InputName onComplete={(newPlayer) => setPlayer(newPlayer)} />
+      </Container>
+    );
+  }
+
+  return <Room player={player} setPlayer={setPlayer} />;
+};
+
+export default RoomWithLogin;

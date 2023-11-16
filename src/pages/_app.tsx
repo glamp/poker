@@ -3,6 +3,8 @@ import createCache from "@emotion/cache";
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { ThemeOptions } from "@mui/material/styles";
+import * as Ably from "ably";
+import { AblyProvider } from "ably/react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import * as React from "react";
@@ -78,24 +80,30 @@ const lightTheme = createTheme(themeOptions);
 
 const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const client = new Ably.Realtime.Promise({
+    key: "57zA6w.Z68jVA:yDSZeTnTjIe9jmCoqh9WlanotLVzZyQfHk1s0wiN19k",
+    clientId: "57zA6w",
+  });
 
   return (
-    <CacheProvider value={emotionCache}>
-      <ThemeProvider theme={lightTheme}>
-        <CssBaseline />
-        <Head>
-          <title>Planning Pokerist</title>
-          <meta name="description" content="Planning Pokerist!" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-          />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
+    <AblyProvider client={client}>
+      <CacheProvider value={emotionCache}>
+        <ThemeProvider theme={lightTheme}>
+          <CssBaseline />
+          <Head>
+            <title>Planning Pokerist</title>
+            <meta name="description" content="Planning Pokerist!" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0"
+            />
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
 
-        <Component {...pageProps} />
-      </ThemeProvider>
-    </CacheProvider>
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </CacheProvider>
+    </AblyProvider>
   );
 };
 

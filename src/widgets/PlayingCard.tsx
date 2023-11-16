@@ -10,7 +10,7 @@ const FlipCard = styled(Card)({
 });
 
 type Props = {
-  text?: string;
+  text?: number | string | null | undefined;
   selectable?: boolean;
   selected?: boolean;
   onClick?: () => void;
@@ -18,7 +18,7 @@ type Props = {
 };
 
 export const PlayingCard: React.FC<Props> = ({
-  text = "100",
+  text,
   selectable = false,
   selected = false,
   isFlipped = true,
@@ -33,14 +33,19 @@ export const PlayingCard: React.FC<Props> = ({
       }}
     >
       <FlipCard
-        style={{ transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
+        style={{
+          transform:
+            isFlipped && Boolean(text) ? "rotateY(180deg)" : "rotateY(0deg)",
+        }}
       >
         {isFlipped ? (
           <Box
             width="100%"
             height="100%"
             sx={{
-              backgroundImage: `url(/card-back.png)`,
+              backgroundImage: Boolean(text)
+                ? `url(/card-back.png)`
+                : `url(/question-mark.png)`,
               backgroundPosition: "center",
               backgroundSize: "cover",
             }}
@@ -62,7 +67,7 @@ export const PlayingCard: React.FC<Props> = ({
             }}
           >
             <Typography variant="inherit" fontWeight="bold">
-              {text}
+              {text ?? "N/A"}
             </Typography>
           </Stack>
         )}

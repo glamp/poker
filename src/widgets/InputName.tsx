@@ -1,3 +1,5 @@
+import * as React from "react";
+import { Player } from "./Player";
 import {
   Avatar,
   Button,
@@ -8,8 +10,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import * as React from "react";
-import { Player } from "./Player";
 
 export const avatars = [
   { name: "Bighorn Sheep", avatar: "/avatars/bighorn-sheep.png" },
@@ -40,6 +40,9 @@ export const InputName: React.FC<Props> = ({ onComplete }) => {
     <Dialog open={true} maxWidth="sm" fullWidth>
       <DialogContent>
         <Stack direction="column" spacing={2}>
+          <Typography variant="h4" textAlign="center">
+            {`What's your name?`}
+          </Typography>
           <TextField
             fullWidth
             label="Your Name"

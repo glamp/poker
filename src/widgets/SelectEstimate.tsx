@@ -1,12 +1,21 @@
-import { Stack } from "@mui/material";
 import { PlayingCard } from "./PlayingCard";
+import { Stack } from "@mui/material";
 
 export const SelectEstimate: React.FC<{
   estimate: number | undefined;
   setEstimate: (estimate: number) => void;
 }> = ({ estimate, setEstimate }) => {
   return (
-    <Stack direction="row" spacing={2} justifyContent="center">
+    <Stack
+      direction="row"
+      spacing={2}
+      justifyContent="center"
+      useFlexGap
+      flexWrap="wrap"
+      sx={{
+        p: { xs: 2, sm: 0 },
+      }}
+    >
       <PlayingCard
         onClick={() => setEstimate(40)}
         selected={estimate === 40}

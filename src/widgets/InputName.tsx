@@ -68,8 +68,8 @@ export const InputName: React.FC<Props> = ({ onComplete }) => {
                 src={avatar.avatar}
                 onClick={() => setSelectedAvatar(avatar.avatar)}
                 sx={{
-                  height: 96,
-                  width: 96,
+                  height: { xs: "60%", md: 96 },
+                  width: { xs: "60%", md: 96 },
                   borderWidth: avatar.avatar === selectedAvatar ? 4 : 0,
                   borderColor: "primary.main",
                   borderStyle: "solid",

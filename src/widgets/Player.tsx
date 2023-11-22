@@ -1,4 +1,9 @@
-import { Avatar, Badge, Stack, Typography } from "@mui/material";
+import {
+  Avatar,
+  Badge,
+  Stack,
+  Typography
+  } from "@mui/material";
 import { PlayingCard } from "./PlayingCard";
 
 export type Player = {
@@ -24,7 +29,7 @@ export const PlayerPresenter: React.FC<Player> = ({
       justifyContent="center"
       alignItems="center"
       sx={{
-        width: 200,
+        width: { xs: 150, md: 200 },
         borderWidth: 4,
         borderColor: isMe ? "secondary.main" : "primary.main",
         borderStyle: "solid",

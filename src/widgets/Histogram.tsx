@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { countBy } from "lodash";
+import { countBy, round } from "lodash";
 import { Player } from "./Player";
 import { PlayingCard } from "./PlayingCard";
 
@@ -9,6 +9,7 @@ export const Histogram: React.FC<{ players: Player[] }> = ({ players }) => {
     .filter(Boolean) as number[];
 
   const hist = countBy(estimates);
+  const average = estimates.reduce((acc, x) => acc + x, 0) / estimates.length;
 
   /**
   const estimateStdev = Math.sqrt(
@@ -44,33 +45,51 @@ export const Histogram: React.FC<{ players: Player[] }> = ({ players }) => {
       alignItems="center"
       justifyContent="center"
     >
-      <Stack direction="row" spacing={2}>
-        {Object.keys(hist)
-          .sort((a, b) => Number(a) - Number(b))
-          .map((key) => {
-            return (
-              <Stack
-                key={`histogram-${key}`}
-                direction="column"
-                spacing={1}
-                alignItems="center"
-                justifyContent="flex-end"
-              >
-                <Typography>{hist[key]}</Typography>
-                <Box
-                  borderRadius={1}
-                  bgcolor={
-                    hist[key] === Math.max(...Object.values(hist))
-                      ? "secondary.main"
-                      : "primary.main"
-                  }
-                  height={hist[key] * 30}
-                  width={20}
-                />
-                <PlayingCard isFlipped={false} text={key} />
-              </Stack>
-            );
-          })}
+      <Stack direction="row" alignItems="center" spacing={8}>
+        <Stack direction="row" spacing={2}>
+          {Object.keys(hist)
+            .sort((a, b) => Number(a) - Number(b))
+            .map((key) => {
+              return (
+                <Stack
+                  key={`histogram-${key}`}
+                  direction="column"
+                  spacing={1}
+                  alignItems="center"
+                  justifyContent="flex-end"
+                >
+                  <Typography>{hist[key]}</Typography>
+                  <Box
+                    borderRadius={1}
+                    bgcolor={
+                      hist[key] === Math.max(...Object.values(hist))
+                        ? "secondary.main"
+                        : "primary.main"
+                    }
+                    height={hist[key] * 30}
+                    width={20}
+                  />
+                  <PlayingCard isFlipped={false} text={key} />
+                </Stack>
+              );
+            })}
+        </Stack>
+        <Stack
+          direction="column"
+          spacing={1}
+          justifyContent="center"
+          alignItems="center"
+          sx={{
+            borderWidth: 4,
+            borderColor: "primary.main",
+            borderStyle: "solid",
+            p: 3,
+            borderRadius: "100%",
+          }}
+        >
+          <Typography variant="h6">Average</Typography>
+          <Typography variant="h4">{round(average, 1)}</Typography>
+        </Stack>
       </Stack>
       {/* <Stack direction="column" spacing={1} alignItems="center">
         <Typography variant="body1">Alignment</Typography>

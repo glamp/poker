@@ -1,15 +1,15 @@
-import "@/styles/globals.css";
-import Nav from "@/widgets/Nav";
-import createCache from "@emotion/cache";
-import { CacheProvider, EmotionCache } from "@emotion/react";
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
-import { ThemeOptions } from "@mui/material/styles";
 import * as Ably from "ably";
-import { AblyProvider } from "ably/react";
-import type { AppProps } from "next/app";
-import Head from "next/head";
 import * as React from "react";
+import createCache from "@emotion/cache";
+import Head from "next/head";
+import Nav from "@/widgets/Nav";
+import { AblyProvider } from "ably/react";
+import { CacheProvider, EmotionCache } from "@emotion/react";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { ThemeOptions } from "@mui/material/styles";
 import "../styles/globals.css";
+import "@/styles/globals.css";
+import type { AppProps } from "next/app";
 
 const themeOptions: ThemeOptions = {
   typography: {
@@ -42,10 +42,10 @@ const themeOptions: ThemeOptions = {
   // https://huemint.com/brand-intersection/#palette=b64a2f-6ac4ac-d7c49e-1c1a2f
   palette: {
     primary: {
-      main: "#557C55",
+      main: "#08221b",
     },
     secondary: {
-      main: "#118C4F",
+      main: "#19d0d0",
     },
     info: {
       main: "#85bb65",

@@ -43,6 +43,8 @@ const Room: React.FC<{
     player
   );
 
+  const nonGuests = presenceData.filter((p) => p.data.name !== "Guest");
+
   useAsync(async () => {
     if (!player) {
       return;
@@ -52,14 +54,14 @@ const Room: React.FC<{
 
   useDebounce(
     async () => {
-      if (presenceData.length === 0) {
+      if (nonGuests.length === 0) {
         return;
       }
       // if the player is the only player in the room, then make them the leader
       if (
         player &&
         !player.isLeader &&
-        presenceData.map((p) => p.data.name === player.name).length === 1
+        nonGuests.map((p) => p.data.name === player.name).length === 1
       ) {
         setPlayer({
           ...player,
@@ -121,9 +123,9 @@ const Room: React.FC<{
     };
   }, [count, isActive]);
 
-  const players = presenceData.map((msg) => msg.data as Player);
+  const players = nonGuests.map((msg) => msg.data as Player);
 
-  if (!players.length) {
+  if (!presenceData.length) {
     // center vertically and horizontally using stack
     return (
       <Container maxWidth="lg">

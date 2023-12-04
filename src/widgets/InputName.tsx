@@ -1,5 +1,3 @@
-import * as React from "react";
-import { Player } from "./Player";
 import {
   Avatar,
   Button,
@@ -10,6 +8,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import * as React from "react";
+import { Player } from "./Player";
 
 export const avatars = [
   { name: "Bighorn Sheep", avatar: "/avatars/bighorn-sheep.png" },
@@ -83,19 +83,31 @@ export const InputName: React.FC<Props> = ({ onComplete }) => {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={!name || !selectedAvatar}
-          onClick={() =>
-            onComplete({
-              name: name ?? "",
-              avatar: selectedAvatar,
-            })
-          }
-        >
-          {`Let's go!`}
-        </Button>
+        <Stack direction="row" justifyContent="space-between" width={"100%"}>
+          <Button
+            onClick={() => {
+              onComplete({
+                name: "Guest",
+                avatar: "/avatars/guest.png",
+              });
+            }}
+          >
+            Join As Guest
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!name || !selectedAvatar}
+            onClick={() =>
+              onComplete({
+                name: name ?? "",
+                avatar: selectedAvatar,
+              })
+            }
+          >
+            {`Let's go!`}
+          </Button>
+        </Stack>
       </DialogActions>
     </Dialog>
   );

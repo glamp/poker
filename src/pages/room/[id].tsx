@@ -44,6 +44,7 @@ const Room: React.FC<{
   );
 
   const nonGuests = presenceData.filter((p) => p.data.name !== "Guest");
+  const guests = presenceData.filter((p) => p.data.name === "Guest");
 
   useAsync(async () => {
     if (!player) {
@@ -91,7 +92,6 @@ const Room: React.FC<{
     if (!player || !estimate || !roomId) {
       return;
     }
-    console.log("estimate", estimate);
     await updateStatus({
       ...player,
       estimate,
@@ -165,7 +165,7 @@ const Room: React.FC<{
             ))}
         </Stack>
 
-        {!reveal && (
+        {!reveal && player.name !== "Guest" && (
           <SelectEstimate estimate={estimate} setEstimate={setEstimate} />
         )}
 

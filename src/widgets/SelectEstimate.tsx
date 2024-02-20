@@ -21,6 +21,20 @@ export const SelectEstimate: React.FC<{
         selected={estimate === 40}
         selectable
         isFlipped={false}
+        text={"10"}
+      />
+      <PlayingCard
+        onClick={() => setEstimate(40)}
+        selected={estimate === 40}
+        selectable
+        isFlipped={false}
+        text={"20"}
+      />
+      <PlayingCard
+        onClick={() => setEstimate(40)}
+        selected={estimate === 40}
+        selectable
+        isFlipped={false}
         text={"40"}
       />
       <PlayingCard

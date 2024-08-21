@@ -1,10 +1,17 @@
 import { PlayingCard } from "./PlayingCard";
 import { Stack } from "@mui/material";
+import * as React from "react";
 
 export const SelectEstimate: React.FC<{
   estimate: number | undefined;
   setEstimate: (estimate: number) => void;
-}> = ({ estimate, setEstimate }) => {
+  sequence: boolean | undefined;
+}> = ({ estimate, setEstimate, sequence }) => {
+  let sequenceArray = [10, 20, 40, 60, 80, 120, 180, 240, 480];
+  if (sequence) {
+    sequenceArray = [1, 3, 5, 8, 13, 21];
+  }
+  
   return (
     <Stack
       direction="row"
@@ -16,69 +23,20 @@ export const SelectEstimate: React.FC<{
         p: { xs: 2, sm: 0 },
       }}
     >
-      <PlayingCard
-        onClick={() => setEstimate(10)}
-        selected={estimate === 10}
-        selectable
-        isFlipped={false}
-        text={"10"}
-      />
-      <PlayingCard
-        onClick={() => setEstimate(20)}
-        selected={estimate === 20}
-        selectable
-        isFlipped={false}
-        text={"20"}
-      />
-      <PlayingCard
-        onClick={() => setEstimate(40)}
-        selected={estimate === 40}
-        selectable
-        isFlipped={false}
-        text={"40"}
-      />
-      <PlayingCard
-        onClick={() => setEstimate(60)}
-        selected={estimate === 60}
-        selectable
-        isFlipped={false}
-        text={"60"}
-      />
-      <PlayingCard
-        onClick={() => setEstimate(80)}
-        selected={estimate === 80}
-        selectable
-        isFlipped={false}
-        text={"80"}
-      />
-      <PlayingCard
-        onClick={() => setEstimate(120)}
-        selected={estimate === 120}
-        selectable
-        isFlipped={false}
-        text={"120"}
-      />
-      <PlayingCard
-        onClick={() => setEstimate(180)}
-        selected={estimate === 180}
-        selectable
-        isFlipped={false}
-        text={"180"}
-      />
-      <PlayingCard
-        onClick={() => setEstimate(240)}
-        selected={estimate === 240}
-        selectable
-        isFlipped={false}
-        text={"240"}
-      />
-      <PlayingCard
-        onClick={() => setEstimate(480)}
-        selected={estimate === 480}
-        selectable
-        isFlipped={false}
-        text={"480"}
-      />
+    {
+      sequenceArray.map(function(data) {
+        return (
+          <PlayingCard
+            onClick={() => setEstimate(data)}
+            selected={estimate === data}
+            selectable
+            isFlipped={false}
+            text={data}
+            key={data}
+          />
+        )
+      })
+    }
     </Stack>
   );
 };

@@ -9,6 +9,8 @@ import {
   DialogContent,
   Stack,
   Typography,
+  Switch,
+  FormControlLabel
 } from "@mui/material";
 import { useChannel, usePresence } from "ably/react";
 import { useRouter } from "next/router";
@@ -45,7 +47,9 @@ const Room: React.FC<{
 
   const nonGuests = presenceData.filter((p) => p.data.name !== "Guest");
   const guests = presenceData.filter((p) => p.data.name === "Guest");
-
+  const sequence = presenceData.filter((p) => p.data.isLeader)[0]?.data?.sequence;
+  const [fibSequence, setFibSequence] = React.useState(sequence ? sequence : false);
+  
   useAsync(async () => {
     if (!player) {
       return;
@@ -88,6 +92,13 @@ const Room: React.FC<{
     setEstimate(undefined);
   });
 
+  useChannel(channelName, "sequence-change", () => {
+    setPlayer({
+      ...player,
+      sequence: fibSequence,
+    });
+  });
+
   useAsync(async () => {
     if (!player || !estimate || !roomId) {
       return;
@@ -106,6 +117,10 @@ const Room: React.FC<{
     ably.channels.get(channelName).publish("new-round", { ts: new Date() });
   }, [ably, channelName]);
 
+  const onClickSequenceToggle = React.useCallback(async () => {
+    ably.channels.get(channelName).publish("sequence-change", { ts: new Date() });
+  }, [ably, channelName]);
+
   React.useEffect(() => {
     let timerId: NodeJS.Timeout | undefined;
 
@@ -121,7 +136,7 @@ const Room: React.FC<{
     return () => {
       if (timerId) clearTimeout(timerId);
     };
-  }, [count, isActive]);
+  }, [count, isActive, fibSequence]);
 
   const players = nonGuests.map((msg) => msg.data as Player);
 
@@ -143,6 +158,29 @@ const Room: React.FC<{
 
   return (
     <Container maxWidth="lg">
+      <Stack
+        spacing={{ xs: 1, sm: 2 }}
+        direction="row"
+        justifyContent="center"
+        useFlexGap
+        flexWrap="wrap"
+        p={2}
+        sx={{ width: "100%" }}
+      >
+        <FormControlLabel
+          control={
+            <Switch
+              checked={fibSequence}
+              onChange={() => {
+                setFibSequence(!fibSequence);
+                onClickSequenceToggle();
+              }}
+              disabled={reveal || !player?.isLeader}
+            />
+          }
+          label="Fibonacci"
+        />
+      </Stack>
       <Stack direction="column" spacing={2}>
         <Stack
           spacing={{ xs: 1, sm: 2 }}
@@ -166,7 +204,7 @@ const Room: React.FC<{
         </Stack>
 
         {!reveal && player.name !== "Guest" && (
-          <SelectEstimate estimate={estimate} setEstimate={setEstimate} />
+          <SelectEstimate estimate={estimate} setEstimate={setEstimate} sequence={sequence} />
         )}
 
         <Dialog open={isActive}>

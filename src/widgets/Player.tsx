@@ -13,6 +13,7 @@ export type Player = {
   isMe?: boolean;
   isLeader?: boolean;
   reveal?: boolean;
+  sequence?: boolean;
 };
 
 export const PlayerPresenter: React.FC<Player> = ({
